@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="hat">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rezo Haïti</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        /* Sistèm Scroll Snap pou li glise egzakteman tankou TikTok */
+        .tiktok-feed {
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+            height: calc(100vh - 70px);
+        }
+        .tiktok-card {
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            height: calc(100vh - 70px);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .active-nav {
+            color: #ffffff !important;
+        }
+        /* Animasyon disk k ap vire pou mizik la */
+        @keyframes rotateDisk {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .music-disk {
+            animation: rotateDisk 5s linear infinite;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col justify-between overflow-hidden select-none bg-black">
+
+    <div class="flex-1 flex flex-col max-w-md w-full mx-auto relative bg-black border-x border-zinc-900 h-full">
+        
+        <div class="absolute top-0 left-0 right-0 h-14 flex justify-center items-center gap-6 bg-gradient-to-b from-black/70 to-transparent z-40 pointer-events-auto">
+            <button onclick="switchFeed('swiv')" id="tab-swiv" class="text-sm font-semibold text-gray-400 transition-colors">Suivis</button>
+            <button onclick="switchFeed('pouou')" id="tab-pouou" class="text-sm font-bold text-white border-b-2 border-white pb-1 transition-colors">Pour toi</button>
+        </div>
+
+        <div id="page-home" class="w-full h-full block">
+            <div id="tiktok-feed-container" class="tiktok-feed no-scrollbar">
+                </div>
+        </div>
+
+        <div id="page-discover" class="w-full h-full p-4 pt-16 overflow-y-auto no-scrollbar hidden bg-zinc-950">
+            <div class="relative mb-6">
+                <input type="text" placeholder="Rechercher" class="w-full bg-zinc-900 border border-transparent rounded-md py-2 pl-10 pr-4 text-sm text-white focus:outline-none focus:bg-zinc-800">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-zinc-500 text-sm"></i>
+            </div>
+            <h3 class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3">Tendances</h3>
+            <div class="grid grid-cols-2 gap-2">
+                <div class="h-32 bg-zinc-900 rounded-lg p-3 flex items-end bg-cover bg-center relative" style="background-image: url('https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400');">
+                    <div class="absolute inset-0 bg-black/40 rounded-lg"></div>
+                    <span class="text-xs font-bold relative z-10">#RezoHaiti</span>
+                </div>
+                <div class="h-32 bg-zinc-900 rounded-lg p-3 flex items-end bg-cover bg-center relative" style="background-image: url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400');">
+                    <div class="absolute inset-0 bg-black/40 rounded-lg"></div>
+                    <span class="text-xs font-bold relative z-10">#TechKreyol</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-inbox" class="w-full h-full p-4 pt-16 overflow-y-auto no-scrollbar hidden bg-zinc-950">
+            <h3 class="text-base font-bold mb-4">Toutes les activités</h3>
+            <div class="space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center"><i class="fa-solid fa-heart text-red-500"></i></div>
+                    <div class="flex-1 text-sm">
+                        <p class="text-zinc-300"><span class="font-bold text-white">Yon itilizatè</span> a aimé votre vidéo.</p>
+                        <span class="text-xs text-zinc-500">Il y a 2 h</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-profile" class="w-full h-full overflow-y-auto no-scrollbar hidden bg-black pt-14">
+            <div class="flex flex-col items-center py-6 border-b border-zinc-900 px-4">
+                <div class="w-20 h-20 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center mb-3">
+                    <i class="fa-solid fa-user text-3xl text-zinc-600"></i>
+                </div>
+                <h4 class="text-sm font-bold flex items-center gap-1">Utilisateur <i class="fa-solid fa-circle-check text-blue-400 text-xs"></i></h4>
+                <p class="text-xs text-zinc-500">@user_rezo</p>
+                
+                <div class="flex gap-6 my-4 text-center">
+                    <div><p class="font-bold text-sm">0</p><p class="text-[11px] text-zinc-400">Abonnements</p></div>
+                    <div><p class="font-bold text-sm" id="me-followers">0</p><p class="text-[11px] text-zinc-400">Abonnés</p></div>
+                    <div><p class="font-bold text-sm">0</p><p class="text-[11px] text-zinc-400">J'aime</p></div>
+                </div>
+                <button class="border border-zinc-800 px-6 py-1.5 rounded text-xs font-semibold hover:bg-zinc-900">Modifier le profil</button>
+            </div>
+            <div class="grid grid-cols-3 gap-0.5 p-0.5">
+                <div class="aspect-[9/16] bg-zinc-900 flex items-center justify-center"><i class="fa-solid fa-lock text-zinc-700"></i></div>
+                <div class="aspect-[9/16] bg-zinc-900 flex items-center justify-center"><i class="fa-solid fa-lock text-zinc-700"></i></div>
+                <div class="aspect-[9/16] bg-zinc-900 flex items-center justify-center"><i class="fa-solid fa-lock text-zinc-700"></i></div>
+            </div>
+        </div>
+
+        <div id="modal-upload" class="absolute inset-0 bg-black/95 z-50 hidden p-6 flex flex-col justify-center">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-base font-bold text-white">Ajouter une vidéo</h3>
+                <button onclick="toggleModal('modal-upload', false)" class="text-zinc-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="space-y-4">
+                <div class="p-4 bg-zinc-900 rounded-lg">
+                    <label class="block text-xs font-bold text-zinc-400 uppercase mb-2">Lien direct de la vidéo (MP4)</label>
+                    <input type="text" id="post-url" placeholder="Kole lyen MP4 la la..." class="w-full bg-black border border-zinc-800 rounded p-2 text-sm text-white focus:outline-none focus:border-zinc-500">
+                </div>
+                <div class="p-4 bg-zinc-900 rounded-lg">
+                    <label class="block text-xs font-bold text-zinc-400 uppercase mb-2">Description</label>
+                    <input type="text" id="post-desc" placeholder="Ekri yon ti tèks..." class="w-full bg-black border border-zinc-800 rounded p-2 text-sm text-white focus:outline-none focus:border-zinc-500">
+                </div>
+                <button onclick="pibliyeNouvoVideyo()" class="w-full bg-red-500 hover:bg-red-600 text-white text-xs font-bold py-2.5 rounded transition-colors">Publier</button>
+            </div>
+        </div>
+
+        <div id="comment-sheet" class="absolute bottom-0 left-0 right-0 h-[65%] bg-zinc-950 border-t border-zinc-900 rounded-t-xl z-50 hidden flex flex-col p-4">
+            <div class="flex justify-between items-center pb-3 border-b border-zinc-900">
+                <span class="text-xs font-bold text-zinc-400" id="sheet-comment-count">0 commentaires</span>
+                <button onclick="toggleComments(false)" class="text-zinc-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="sheet-comments-list" class="flex-1 overflow-y-auto py-3 space-y-3 no-scrollbar text-sm">
+                </div>
+            <div class="flex gap-2 border-t border-zinc-900 pt-3 bg-zinc-950">
+                <input type="text" id="sheet-input" placeholder="Ajouter un commentaire..." class="flex-1 bg-zinc-900 border border-transparent rounded-full px-4 py-2 text-xs text-white focus:outline-none focus:border-zinc-700">
+                <button onclick="voyeKomantere()" class="text-red-500 font-bold text-xs px-2">Envoyer</button>
+            </div>
+        </div>
+
+    </div>
+
+    <nav class="w-full h-[70px] border-t border-zinc-900 bg-black flex justify-around items-center max-w-md mx-auto z-40">
+        <button onclick="changePage('home', this)" class="flex flex-col items-center gap-0.5 text-zinc-500 active-nav">
+            <i class="fa-solid fa-house text-lg"></i>
+            <span class="text-[9px] font-medium">Accueil</span>
+        </button>
+        <button onclick="changePage('discover', this)" class="flex flex-col items-center gap-0.5 text-zinc-500">
+            <i class="fa-solid fa-compass text-lg"></i>
+            <span class="text-[9px] font-medium">Découvrir</span>
+        </button>
+        
+        <button onclick="toggleModal('modal-upload', true)" class="relative w-11 h-7 flex items-center justify-center">
+            <div class="absolute inset-0 bg-cyan-400 rounded-lg translate-x-[-3px]"></div>
+            <div class="absolute inset-0 bg-red-500 rounded-lg translate-x-[3px]"></div>
+            <div class="absolute inset-0 bg-white rounded-lg flex items-center justify-center z-10">
+                <i class="fa-solid fa-plus text-black text-xs"></i>
+            </div>
+        </button>
+
+        <button onclick="changePage('inbox', this)" class="flex flex-col items-center gap-0.5 text-zinc-500">
+            <i class="fa-solid fa-comment-dots text-lg"></i>
+            <span class="text-[9px] font-medium">Boîte de réception</span>
+        </button>
+        <button onclick="changePage('profile', this)" class="flex flex-col items-center gap-0.5 text-zinc-500">
+            <i class="fa-solid fa-user text-lg"></i>
+            <span class="text-[9px] font-medium">Profil</span>
+        </button>
+    </nav>
+
+    <script>
+        // Done Videyo ki Sèvi kòm "Anti-TikTok Stream" san blokaj sèvè (Lyen MP4 Piblik rapid)
+        let dbVideos = [
+            {
+                id: 1,
+                user: "@rezo_haiti_trends",
+                desc: "G-CASH HUB vin tounen Rezo Haïti! Gade vrè videyo san w pa kite platfòm nan epi kòmanse bati rèv ou. #haiti #tech",
+                likes: "25.4K",
+                comments: [
+                    { user: "@mizik_fan", text: "Anfòm nèt, li jwe san lagg!" },
+                    { user: "@haiti_creative", text: "Bèl travay, sistèm nan pwòp." }
+                ],
+                src: "https://vjs.zencdn.net/v/oceans.mp4"
+            },
+            {
+                id: 2,
+                user: "@creative_creator",
+                desc: "Dezyèm tès sistèm nan pou asire tout videyo yo chaje pafè. Pa bliye abòne! #fyp #rezo",
+                likes: "12.8K",
+                comments: [
+                    { user: "@user88", text: "Waw, sa bèl tonton!" }
+                ],
+                src: "https://assets.mixkit.co/videos/preview/mixkit-girl-in-neon-sign-light-dancing-40026-large.mp4"
+            }
+        ];
+
+        let activeVideoId = null;
+
+        // Chaje videyo yo sou Feed la otomatikman
+        function renderTikTokFeed() {
+            const feed = document.getElementById('tiktok-feed-container');
+            feed.innerHTML = "";
+
+            dbVideos.forEach((video, index) => {
+                feed.innerHTML += `
+                    <div class="tiktok-card w-full relative bg-zinc-950 flex items-center justify-center overflow-hidden border-b border-zinc-900/40">
+                        <video id="video-player-${video.id}" class="w-full h-full object-cover" loop muted playsinline onclick="playPauseHandler(this)" src="${video.src}"></video>
+                        
+                        <div class="absolute right-3 bottom-20 flex flex-col items-center gap-4 z-30">
+                            <div class="relative mb-2 flex flex-col items-center">
+                                <div class="w-11 h-11 rounded-full bg-zinc-900 border border-zinc-700 flex items-center justify-center">
+                                    <i class="fa-solid fa-user text-sm text-zinc-400"></i>
+                                </div>
+                                <button onclick="followUser(this)" class="absolute bottom-[-5px] bg-red-500 text-white rounded-full text-[10px] w-4 h-4 flex items-center justify-center border border-black font-bold">+</button>
+                            </div>
+                            
+                            <div class="flex flex-col items-center cursor-pointer" onclick="toggleLike(this)">
+                                <i class="fa-solid fa-heart text-2xl text-white drop-shadow-md transition-colors"></i>
+                                <span class="text-[11px] font-semibold mt-0.5">${video.likes}</span>
+                            </div>
+                            
+                            <div class="flex flex-col items-center cursor-pointer" onclick="openCommentSheet(${video.id})">
+                                <i class="fa-solid fa-comment text-2xl text-white drop-shadow-md"></i>
+                                <span class="text-[11px] font-semibold mt-0.5">${video.comments.length}</span>
+                            </div>
+
+                            <div class="flex flex-col items-center cursor-pointer" onclick="copyShareLink()">
+                                <i class="fa-solid fa-share text-2xl text-white drop-shadow-md"></i>
+                                <span class="text-[10px] font-semibold mt-0.5">Partager</span>
+                            </div>
+
+                            <div class="w-9 h-9 rounded-full bg-zinc-800 border-4 border-zinc-700/60 flex items-center justify-center music-disk mt-2">
+                                <i class="fa-solid fa-music text-xs text-white"></i>
+                            </div>
+                        </div>
+
+                        <div class="absolute bottom-4 left-3 right-16 z-30 pointer-events-none">
+                            <h4 class="font-bold text-sm text-white flex items-center gap-1">${video.user}</h4>
+                            <p class="text-xs text-zinc-200 mt-1 line-clamp-3 leading-relaxed drop-shadow-sm">${video.desc}</p>
+                        </div>
+
+                        <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"></div>
+                    </div>
+                `;
+            });
+
+            // Otopley pou premye videyo a lè paj la chaje
+            initAutoplay();
+        }
+
+        function initAutoplay() {
+            setTimeout(() => {
+                let first = document.getElementById('video-player-1');
+                if (first) {
+                    first.play().catch(() => {
+                        console.log("Klike sou ekran an pou w kòmanse gade videyo yo.");
+                    });
+                    activeVideoId = 1;
+                }
+            }, 300);
+        }
+
+        // Play/Pause lè w klike sou videyo a
+        function playPauseHandler(v) {
+            if (v.paused) v.play();
+            else v.pause();
+        }
+
+        // Like chanje koulè
+        function toggleLike(element) {
+            let icon = element.querySelector('i');
+            if (icon.classList.contains('text-white')) {
+                icon.classList.remove('text-white');
+                icon.classList.add('text-red-500');
+            } else {
+                icon.classList.remove('text-red-500');
+                icon.classList.add('text-white');
+            }
+        }
+
+        function followUser(btn) {
+            btn.style.display = 'none';
+        }
+
+        // Chanje paj nan Navigasyon an
+        function changePage(pageId, btn) {
+            document.getElementById('page-home').classList.add('hidden');
+            document.getElementById('page-discover').classList.add('hidden');
+            document.getElementById('page-inbox').classList.add('hidden');
+            document.getElementById('page-profile').classList.add('hidden');
+
+            document.getElementById(`page-${pageId}`).classList.remove('hidden');
+
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active-nav'));
+            if(btn) btn.classList.add('active-nav');
+
+            // Kanpe videyo yo si w kite Accueil
+            if (pageId !== 'home') {
+                document.querySelectorAll('video').forEach(v => v.pause());
+            } else {
+                let act = document.getElementById(`video-player-${activeVideoId}`);
+                if (act) act.play();
+            }
+        }
+
+        function toggleModal(id, show) {
+            const m = document.getElementById(id);
+            if(show) m.classList.remove('hidden');
+            else m.classList.add('hidden');
+        }
+
+        // Pibliye yon nouvo videyo dinamikman
+        function pibliyeNouvoVideyo() {
+            const url = document.getElementById('post-url').value;
+            const desc = document.getElementById('post-desc').value;
+
+            if (!url) {
+                alert("Silvouplè mete yon lyen videyo valid.");
+                return;
+            }
+
+            let newVideo = {
+                id: dbVideos.length + 1,
+                user: "@kreyatè_rezo",
+                desc: desc || "Nouvo videyo pibliye sou Rezo Haïti! #viral",
+                likes: "1",
+                comments: [],
+                src: url
+            };
+
+            dbVideos.unshift(newVideo); // Mete l an liy an premye
+            renderTikTokFeed();
+            toggleModal('modal-upload', false);
+            changePage('home');
+            
+            document.getElementById('post-url').value = "";
+            document.getElementById('post-desc').value = "";
+        }
+
+        // Louvri Zòn Kòmantè yo
+        function openCommentSheet(id) {
+            activeVideoId = id;
+            toggleComments(true);
+            const video = dbVideos.find(v => v.id === id);
+            document.getElementById('sheet-comment-count').innerText = `${video.comments.length} commentaires`;
+            
+            const list = document.getElementById('sheet-comments-list');
+            list.innerHTML = "";
+            video.comments.forEach(c => {
+                list.innerHTML += `
+                    <div class="flex gap-2">
+                        <div class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-[10px] text-zinc-400 font-bold">U</div>
+                        <div>
+                            <p class="text-xs font-bold text-zinc-400">${c.user}</p>
+                            <p class="text-xs text-white mt-0.5">${c.text}</p>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function toggleComments(show) {
+            const sheet = document.getElementById('comment-sheet');
+            if(show) sheet.classList.remove('hidden');
+            else sheet.classList.add('hidden');
+        }
+
+        function voyeKomantere() {
+            const input = document.getElementById('sheet-input');
+            if (!input.value) return;
+
+            const video = dbVideos.find(v => v.id === activeVideoId);
+            video.comments.push({ user: "@moi", text: input.value });
+            
+            openCommentSheet(activeVideoId);
+            input.value = "";
+        }
+
+        function copyShareLink() {
+            alert("Lien copié avec succès !");
+        }
+
+        function switchFeed(type) {
+            const s = document.getElementById('tab-swiv');
+            const p = document.getElementById('tab-pouou');
+            if (type === 'swiv') {
+                s.className = "text-sm font-bold text-white border-b-2 border-white pb-1 transition-colors";
+                p.className = "text-sm font-semibold text-gray-400 transition-colors";
+            } else {
+                p.className = "text-sm font-bold text-white border-b-2 border-white pb-1 transition-colors";
+                s.className = "text-sm font-semibold text-gray-400 transition-colors";
+            }
+        }
+
+        // Kòmanse tout sistèm nan
+        renderTikTokFeed();
+    </script>
+</body>
+</html>
